@@ -4,9 +4,12 @@ from rest_framework.response import Response
 from rest_framework import mixins
 from rest_framework import generics
 from rest_framework import permissions
+from rest_framework.reverse import reverse
+from rest_framework.decorators import api_view
 from rest_app.models import Blog
 from rest_app.serializers import BlogSerializer,UserSerializer
 from django.contrib.auth.models import User
+
 
 class isOwnerOrReadOnly(permissions.BasePermission):
 	def has_object_permission(self,request,view,obj):
@@ -39,4 +42,9 @@ class UserDetail(generics.RetrieveAPIView):
 	queryset=  User.objects.all()
 	serializer_class =UserSerializer
 	
-
+@api_view(('GET',))
+def api_root(request,format=None):
+	return Response({
+			'users':reverse('users-list',request=request,format=format),
+			'blogs':reverse('blogs-list',request=request,format=format)
+				})
